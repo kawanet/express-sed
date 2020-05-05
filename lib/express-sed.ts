@@ -29,33 +29,36 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
         const isHEAD = (_method === "HEAD");
         if (isHEAD) req.method = "GET";
 
-        res.write = function (chunk: any) {
+        res.write = function (chunk: any, encoding?: any, cb?: any) {
             if (ended) return false;
+
             const args = [].slice.call(arguments);
+            if ("function" === typeof args[args.length - 1]) cb = args.pop();
             queue.push(args);
+            if (cb) cb();
+
             return true;
         };
 
-        res.end = function (chunk: any, encoding?: any, cb?: any) {
+        res.end = function (chunk?: any, encoding?: any, cb?: any) {
             if (ended) return false;
             ended = true;
 
             // chunk argument could be omitted
-            const args = [].slice.call(arguments);
-            if ("function" === typeof chunk) {
-                args.unshift(null);
-            }
+            let args = [].slice.call(arguments);
+            if ("function" === typeof args[args.length - 1]) cb = args.pop();
+            if (args[0]) queue.push(args);
+            args = cb ? [cb] : [];
 
             const type = this.get("Content-Type");
             if (isText(type)) {
-                queue.push(args);
-
                 // Concatenate
                 let text = queue.map(item => item[0]).filter(chunk => chunk).join("");
 
                 // Replace response body
                 text = transform(text) || "";
-                const data = args[0] = Buffer.from(text);
+                const data = Buffer.from(text);
+                if (!isHEAD) args.unshift(data);
 
                 // Content-Length:
                 this.set("Content-Length", (+data.length) + "");
@@ -70,7 +73,6 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
                 queue.forEach(item => _write.apply(this, item));
             }
 
-            if (isHEAD) args[0] = null;
             return _end.apply(this, args);
         }
 

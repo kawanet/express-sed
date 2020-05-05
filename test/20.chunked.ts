@@ -87,7 +87,18 @@ function chunkedStatic(htdocs: string): express.RequestHandler {
         if (type) res.type(type);
 
         const data = fs.readFileSync(path, null);
-        [].map.call(data, (byte: number) => res.write(Buffer.from([byte])));
-        res.end();
+        res.header("Content-Length", "" + data.length);
+        const queue = [].slice.call(data);
+        writeChunk();
+
+        function writeChunk() {
+            const byte = queue.shift();
+            const chunk = Buffer.from([byte]);
+            if (queue.length) {
+                res.write(chunk, writeChunk);
+            } else {
+                res.end(chunk);
+            }
+        }
     };
 }
