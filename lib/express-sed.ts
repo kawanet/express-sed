@@ -4,15 +4,24 @@ import * as express from "express";
 
 type replaceFn = (str: string) => string;
 type chunkItem = [string | Buffer, any, any];
+type numMap = { [type: string]: number };
 
-const textType = {
+const textType: numMap = {
     "javascript": 1,
     "json": 1,
     "text": 1,
     "utf-8": 1, // ; charset=UTF-8
     "x-javascript": 1,
     "xml": 1,
-} as { [type: string]: number };
+};
+
+const removeHeaders: numMap = {
+    "if-match": 1,
+    "if-modified-since": 1,
+    "if-none-match": 1,
+    "if-unmodified-since": 1,
+    "range": 1,
+};
 
 export function sed(transform: (string | replaceFn)): express.RequestHandler {
     if ("string" === typeof transform) {
@@ -28,6 +37,9 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
         const _method = req.method;
         const isHEAD = (_method === "HEAD");
         if (isHEAD) req.method = "GET";
+
+        // remove conditional request headers
+        Object.keys(removeHeaders).forEach(key => delete req.headers[key]);
 
         res.write = function (chunk: any, encoding?: any, cb?: any) {
             if (ended) return false;
