@@ -25,6 +25,10 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
         const _write = res.write;
         const _end = res.end;
 
+        const _method = req.method;
+        const isHEAD = (_method === "HEAD");
+        if (isHEAD) req.method = "GET";
+
         res.write = function (chunk: any) {
             if (ended) return false;
             const args = [].slice.call(arguments);
@@ -38,7 +42,7 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
 
             // chunk argument could be omitted
             const args = [].slice.call(arguments);
-            if ("function" === typeof args[0]) {
+            if ("function" === typeof chunk) {
                 args.unshift(null);
             }
 
@@ -50,7 +54,7 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
                 let text = queue.map(item => item[0]).filter(chunk => chunk).join("");
 
                 // Replace response body
-                text = transform(text);
+                text = transform(text) || "";
                 const data = args[0] = Buffer.from(text);
 
                 // Content-Length:
@@ -61,11 +65,12 @@ export function sed(transform: (string | replaceFn)): express.RequestHandler {
                 if ("function" === typeof etagFn) {
                     this.set("ETag", etagFn(data));
                 }
-            } else {
+            } else if (!isHEAD) {
                 // ignore binary content
                 queue.forEach(item => _write.apply(this, item));
             }
 
+            if (isHEAD) args[0] = null;
             return _end.apply(this, args);
         }
 

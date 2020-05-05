@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as express from "express";
 import * as request from "supertest";
 
-import {sed} from "../";
+import {sed} from "../lib/express-sed";
 
 const TITLE = __filename.split("/").pop();
 

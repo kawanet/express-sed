@@ -1,8 +1,9 @@
 #!/usr/bin/env mocha -R spec
 
 import * as express from "express";
-import {sed} from "../";
 import * as request from "supertest";
+
+import {sed} from "../lib/express-sed";
 
 const TITLE = __filename.split("/").pop();
 

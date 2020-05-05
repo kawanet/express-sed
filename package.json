@@ -28,7 +28,7 @@
   "main": "lib/express-sed.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kawanet/express-se.git"
+    "url": "git+https://github.com/kawanet/express-sed.git"
   },
   "scripts": {
     "fixpack": "fixpack",
