@@ -1,4 +1,8 @@
-import * as express from "express";
-declare type replaceFn = (str: string) => string;
-export declare function sed(transform: (string | replaceFn)): express.RequestHandler;
+import { RequestHandler } from "express";
+declare type Replacer = (str: string) => string | Promise<string>;
+export interface SedOptions {
+    method?: RegExp | string;
+    contentType?: RegExp | string;
+}
+export declare function sed(replacer: (string | Replacer), options?: SedOptions): RequestHandler;
 export {};

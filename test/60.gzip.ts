@@ -20,8 +20,8 @@ describe(TITLE, () => {
 
     test("/without-sed/gzip", "sample:gzip");
     test("/without-sed/deflate", "sample:deflate");
-    test("/with-sed/gzip", "SAMPLE:gzip");
-    test("/with-sed/deflate", "SAMPLE:deflate");
+    test("/with-sed/gzip", "[SAMPLE]:gzip");
+    test("/with-sed/deflate", "[SAMPLE]:deflate");
 
     function test(path: string, expected: string) {
         it(path, () => {
@@ -33,7 +33,7 @@ describe(TITLE, () => {
 function getAgent() {
     const app = express();
     app.get("/without-sed/:encoding", sampleAPI());
-    app.use(sed("s/sample/SAMPLE/g"));
+    app.use(sed("s/sample/[SAMPLE]/g"));
     app.get("/with-sed/:encoding", sampleAPI());
     return request(app);
 }

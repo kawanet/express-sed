@@ -6,7 +6,7 @@ Express middleware to transform response body
 
 ```js
 const express = require("express");
-const sed = require("express-sed");
+const sed = require("express-sed").sed;
 const app = express();
 
 // replace with string

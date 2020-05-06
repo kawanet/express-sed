@@ -9,8 +9,8 @@ import {sed} from "../lib/express-sed";
 const TITLE = __filename.split("/").pop();
 
 const documentRoot = __dirname + "/htdocs";
-const upperFn = (src: string) => src.replace(/sample/g, str => str.toUpperCase());
-const lowerFn = (src: string) => src.replace(/GIF|PNG/, str => str.toLowerCase());
+const stringFn = (src: string) => src.replace(/(sample)/g, "[$1]");
+const binaryFn = (src: string) => src.replace(/(GIF|PNG)/, "[$1]");
 
 describe(TITLE, () => {
 
@@ -43,10 +43,10 @@ describe(TITLE, () => {
         textFiles.forEach(path => {
             it(path, () => {
                 const app = express();
-                app.use(sed(upperFn));
+                app.use(sed(stringFn));
                 app.use(chunkedStatic(documentRoot));
                 const body = fs.readFileSync(documentRoot + path, "utf8");
-                return request(app).get(path).expect(upperFn(body));
+                return request(app).get(path).expect(stringFn(body));
             });
         });
     });
@@ -55,7 +55,7 @@ describe(TITLE, () => {
         binaryFiles.forEach(path => {
             it(path, () => {
                 const app = express();
-                app.use(sed(lowerFn));
+                app.use(sed(binaryFn));
                 app.use(chunkedStatic(documentRoot));
                 const body = fs.readFileSync(documentRoot + path, null);
                 return request(app).get(path).buffer(true).parse(concatParser).expect(body);

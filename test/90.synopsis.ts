@@ -3,7 +3,7 @@
 import * as express from "express";
 import * as request from "supertest";
 
-import {sed} from "../lib/express-sed";
+const sed = require("../lib/express-sed").sed;
 
 const TITLE = __filename.split("/").pop();
 

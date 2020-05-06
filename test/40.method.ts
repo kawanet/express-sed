@@ -17,15 +17,13 @@ describe(TITLE, () => {
         const expected = "[SAMPLE] text\n";
 
         it("GET " + path, async () => {
-            const {header, text} = await agent.get(path);
+            const {text} = await agent.get(path);
             assert.equal(text, expected);
-            assert.equal(header["content-length"], "" + expected.length);
         });
 
         it("HEAD " + path, async () => {
-            const {header, text} = await agent.head(path);
+            const {text} = await agent.head(path);
             assert.equal(text, undefined);
-            assert.equal(header["content-length"], "" + expected.length);
         });
     }
 
@@ -35,29 +33,29 @@ describe(TITLE, () => {
         it("GET " + path, async () => {
             const {header, text} = await agent.get(path);
             const expected = "GET [SAMPLE]";
+            assert.equal(header["x-method"], "GET");
             assert.equal(text, expected);
-            assert.equal(header["content-length"], "" + expected.length);
         });
 
         it("HEAD " + path, async () => {
             const {header, text} = await agent.head(path);
-            const expected = "GET [SAMPLE]";
+            assert.equal(header["x-method"], "HEAD"); // original
+            // assert.equal(header["x-method"], "GET"); // if overridden
             assert.equal(text, undefined);
-            assert.equal(header["content-length"], "" + expected.length);
         });
 
         it("POST " + path, async () => {
             const {header, text} = await agent.post(path);
             const expected = "POST [SAMPLE]";
+            assert.equal(header["x-method"], "POST");
             assert.equal(text, expected);
-            assert.equal(header["content-length"], "" + expected.length);
         });
     }
 });
 
 function getAgent() {
     const app = express();
-    app.use(sed("s/sample/[SAMPLE]/g"));
+    app.use(sed("s/sample/[SAMPLE]/g", {method: /GET|HEAD|POST/}));
     app.use("/api/", sampleAPI());
     app.use(express.static(documentRoot));
     return request(app);
@@ -66,7 +64,9 @@ function getAgent() {
 function sampleAPI(): express.RequestHandler {
     return (req, res, next) => {
         const body = req.method + " sample";
-        res.header("Content-Length", "" + body.length);
+        res.header("Content-Length", String(body.length));
+        res.header("X-Method", req.method);
+
         if (req.method === "HEAD") {
             res.end();
         } else {
