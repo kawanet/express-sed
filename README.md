@@ -2,6 +2,8 @@
 
 Express middleware to transform response body
 
+[![npm version](https://badge.fury.io/js/express-sed.svg)](https://www.npmjs.com/package/express-sed)
+
 ## SYNOPSIS
 
 ```js
