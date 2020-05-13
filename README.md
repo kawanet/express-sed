@@ -11,15 +11,15 @@ const express = require("express");
 const sed = require("express-sed").sed;
 const app = express();
 
-// replace with string
+// replace with string pair
 app.use(sed(body => body.replace("Copyright (c) [year]", "Copyright (c) 2020")));
 
 // replace by function
 const vars = {year: "2020"};
 app.use(sed(body => body.replace(/\[(\w+)\]/g, (match, $1) => vars[$1])));
 
-// replace like sed
-app.use(sed("s/Copyright \\(c\\) \\[year\\]/Copyright (c) 2020/"));
+// replace with `sed` transform definition for content type specified
+app.use(sed("s/&copy;/(c)/g", {contentType: "text/html"}));
 
 app.use(express.static("htdocs"));
 app.listen(3000);
