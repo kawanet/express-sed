@@ -2,6 +2,7 @@
 
 import {RequestHandler} from "express";
 import {requestHandler, responseHandler} from "express-intercept";
+import {sed as parse} from "sed-lite";
 
 type Replacer = (str: string) => string | Promise<string>;
 type Tester = { test: (str: string) => boolean };
@@ -30,9 +31,11 @@ export function sed(replacer: (string | Replacer), options?: SedOptions): Reques
     if (!options) options = {} as SedOptions;
 
     if ("function" !== typeof replacer) {
-        const fn = parse(replacer);
-        if (!fn) throw new SyntaxError("Invalid transform: " + replacer);
-        return sed(fn, options);
+        replacer = parse(replacer);
+    }
+
+    if (!replacer) {
+        throw new SyntaxError("Invalid transform: " + replacer);
     }
 
     const method = makeTester(options.method || defaults.method);
@@ -46,34 +49,4 @@ export function sed(replacer: (string | Replacer), options?: SedOptions): Reques
     return requestHandler()
         .for(req => method.test(req.method))
         .use(removeRange, replaceHandler);
-}
-
-/**
- * parse s/match/replace/g
- * @private
- */
-
-function parse(str: string): Replacer {
-    if (str && str[0] === "s") {
-        const sep = str[1];
-        const list: string[] = [""];
-        let idx: number = 0;
-
-        str.split(/(\\.|[^\\])/).forEach(str => {
-            if (str === sep) {
-                list[++idx] = "";
-            } else if (str) {
-                list[idx] += str;
-            }
-        });
-
-        if (idx === 3) {
-            const regexp = new RegExp(list[1], list[3]);
-            const replace = list[2];
-
-            return (str) => {
-                return str.replace(regexp, replace);
-            };
-        }
-    }
 }
