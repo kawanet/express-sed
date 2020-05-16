@@ -2,6 +2,7 @@
 
 Express middleware to transform response body
 
+![Node.js CI](https://github.com/kawanet/express-sed/workflows/Node.js%20CI/badge.svg?branch=master)
 [![npm version](https://badge.fury.io/js/express-sed.svg)](https://www.npmjs.com/package/express-sed)
 
 ## SYNOPSIS
@@ -24,6 +25,11 @@ app.use(sed("s/&copy;/(c)/g", {contentType: "text/html"}));
 app.use(express.static("htdocs"));
 app.listen(3000);
 ```
+
+## SEE ALSO
+
+- https://github.com/kawanet/sed-lite
+- https://github.com/kawanet/express-intercept
 
 ## LICENSE
 
