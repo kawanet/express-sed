@@ -34,6 +34,7 @@ for more detail.
 
 - https://github.com/kawanet/sed-lite
 - https://github.com/kawanet/express-intercept
+- https://github.com/kawanet/express-sed
 
 ## LICENSE
 
