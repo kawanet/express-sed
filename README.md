@@ -26,6 +26,10 @@ app.use(express.static("htdocs"));
 app.listen(3000);
 ```
 
+See TypeScript declaration
+[express-sed.d.ts](https://github.com/kawanet/express-sed/blob/master/types/express-sed.d.ts)
+for more detail.
+
 ## SEE ALSO
 
 - https://github.com/kawanet/sed-lite
