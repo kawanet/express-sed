@@ -5,14 +5,13 @@ import {requestHandler, responseHandler} from "express-intercept";
 import {sed as parse} from "sed-lite";
 
 type Replacer = (str: string) => string | Promise<string>;
-type Tester = { test: (str: string) => boolean };
 
 export interface SedOptions {
     /// HTTP request method: regexp or forward match string
-    method?: RegExp | Tester;
+    method?: RegExp | { test: (str: string) => boolean };
 
     /// HTTP response Content-Type: regexp or forward match string
-    contentType?: RegExp | Tester;
+    contentType?: RegExp | { test: (str: string) => boolean };
 }
 
 const defaults: SedOptions = {
