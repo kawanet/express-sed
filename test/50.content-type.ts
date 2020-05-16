@@ -12,7 +12,7 @@ const documentRoot = __dirname + "/htdocs";
 
 describe(TITLE, () => {
     {
-        const options = {contentType: "text/html"};
+        const options = {contentType: /^text\/html/};
         const agent = getAgent(options);
 
         it(JSON.stringify(options), async () => {
@@ -22,7 +22,7 @@ describe(TITLE, () => {
     }
 
     {
-        const options = {contentType: "text/css"};
+        const options = {contentType: /^text\/css/};
         const agent = getAgent(options);
 
         it(JSON.stringify(options), async () => {
