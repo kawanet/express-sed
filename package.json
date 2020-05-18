@@ -1,7 +1,7 @@
 {
   "name": "express-sed",
   "description": "Express middleware to transform response body",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "Yusuke Kawasaki <u-suke@kawa.net>",
   "contributors": [
     "Yusuke Kawasaki <u-suke@kawa.net>"

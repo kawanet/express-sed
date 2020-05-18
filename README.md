@@ -19,8 +19,8 @@ app.use(sed(body => body.replace("Copyright (c) [year]", "Copyright (c) 2020")))
 const vars = {year: "2020"};
 app.use(sed(body => body.replace(/\[(\w+)\]/g, (match, $1) => vars[$1])));
 
-// replace with `sed` transform definition for content type specified
-app.use(sed("s/&copy;/(c)/g", {contentType: "text/html"}));
+// replace with `sed` transform definition for HTML contents only
+app.use(sed("s/&copy;/(c)/g", {contentType: /html/}));
 
 app.use(express.static("htdocs"));
 app.listen(3000);
