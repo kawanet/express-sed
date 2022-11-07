@@ -1,18 +1,10 @@
 // express-sed.ts
 
-import {RequestHandler} from "express";
 import {requestHandler, responseHandler} from "express-intercept";
 import {sed as parse} from "sed-lite";
+import type * as types from "../types/express-sed";
 
-type Replacer = (str: string) => string | Promise<string>;
-
-export interface SedOptions {
-    /// HTTP request method: regexp or forward match string
-    method?: RegExp | { test: (str: string) => boolean };
-
-    /// HTTP response Content-Type: regexp or forward match string
-    contentType?: RegExp | { test: (str: string) => boolean };
-}
+type SedOptions = types.SedOptions;
 
 const defaults: SedOptions = {
     // skip when HEAD method per default
@@ -24,7 +16,7 @@ const defaults: SedOptions = {
 
 const removeRange = requestHandler().getRequest(req => delete req.headers.range);
 
-export function sed(replacer: (string | Replacer), options?: SedOptions): RequestHandler {
+export const sed: typeof types.sed = (replacer, options) => {
     if (!options) options = {} as SedOptions;
 
     if ("function" !== typeof replacer) {

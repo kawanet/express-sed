@@ -6,7 +6,7 @@ import * as request from "supertest";
 import {gzip, deflate} from "zlib";
 import {promisify} from "util";
 
-import {sed} from "../lib/express-sed";
+import {sed} from "../";
 
 const TITLE = __filename.split("/").pop();
 

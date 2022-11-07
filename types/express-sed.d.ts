@@ -1,12 +1,13 @@
-import { RequestHandler } from "express";
+import type {RequestHandler} from "express";
+
 declare type Replacer = (str: string) => string | Promise<string>;
-export interface SedOptions {
-    method?: RegExp | {
-        test: (str: string) => boolean;
-    };
-    contentType?: RegExp | {
-        test: (str: string) => boolean;
-    };
+
+declare interface SedOptions {
+    /// HTTP request method: regexp or forward match string
+    method?: RegExp | { test: (str: string) => boolean };
+
+    /// HTTP response Content-Type: regexp or forward match string
+    contentType?: RegExp | { test: (str: string) => boolean };
 }
-export declare function sed(replacer: (string | Replacer), options?: SedOptions): RequestHandler;
-export {};
+
+export declare const sed: (replacer: (string | Replacer), options?: SedOptions) => RequestHandler;
