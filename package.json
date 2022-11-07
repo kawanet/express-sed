@@ -24,8 +24,8 @@
   "files": [
     "LICENSE",
     "README.md",
-    "lib/",
-    "types/express-sed.d.ts"
+    "lib/*.js",
+    "types/*.d.ts"
   ],
   "homepage": "https://github.com/kawanet/express-sed#readme",
   "keywords": [
@@ -42,11 +42,10 @@
     "url": "git+https://github.com/kawanet/express-sed.git"
   },
   "scripts": {
-    "build": "npm run build-lib && npm run build-types",
-    "build-lib": "./node_modules/.bin/tsc -p .",
-    "build-types": "./node_modules/.bin/tsc -p types",
+    "build": "./node_modules/.bin/tsc -p .",
     "fixpack": "fixpack",
     "mocha": "./node_modules/.bin/mocha -R spec test/*.js",
+    "prepack": "npm run build && npm test",
     "test": "npm run mocha",
     "tsc-watch": "tsc --watch"
   },
