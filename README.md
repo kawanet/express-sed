@@ -5,19 +5,22 @@ Express middleware to transform response body
 [![Node.js CI](https://github.com/kawanet/express-sed/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/kawanet/express-sed/actions/)
 [![npm version](https://badge.fury.io/js/express-sed.svg)](https://www.npmjs.com/package/express-sed)
 
+Works with Express 4 and 5.
+
 ## SYNOPSIS
 
-```js
-const express = require("express");
-const sed = require("express-sed").sed;
+```ts
+import express from "express";
+import {sed} from "express-sed";
+
 const app = express();
 
 // replace with string pair
-app.use(sed(body => body.replace("Copyright (c) [year]", "Copyright (c) 2020")));
+app.use(sed(body => body.replace("Copyright (c) [year]", "Copyright (c) 2026")));
 
 // replace by function
-const vars = {year: "2020"};
-app.use(sed(body => body.replace(/\[(\w+)\]/g, (match, $1) => vars[$1])));
+const vars = {year: "2026"};
+app.use(sed(body => body.replace(/\[(\w+)\]/g, (_match, k) => vars[k])));
 
 // replace with `sed` transform definition for HTML contents only
 app.use(sed("s/&copy;/(c)/g", {contentType: /html/}));
@@ -30,6 +33,25 @@ See TypeScript declaration
 [express-sed.d.ts](https://github.com/kawanet/express-sed/blob/master/types/express-sed.d.ts)
 for more detail.
 
+## NOTE ON ETAG / LAST-MODIFIED
+
+Since this middleware mutates the response body, any upstream `ETag` /
+`Last-Modified` headers may become inaccurate. If your stack relies on
+conditional GETs, consider stripping or regenerating these headers
+downstream of `sed`. Example:
+
+```ts
+import {responseHandler} from "express-intercept";
+import {sed} from "express-sed";
+
+const stripValidators = responseHandler().getResponse(res => {
+    res.removeHeader("etag");
+    res.removeHeader("last-modified");
+});
+
+app.use(stripValidators, sed("s/foo/FOO/g"));
+```
+
 ## SEE ALSO
 
 - https://github.com/kawanet/sed-lite
@@ -40,7 +62,7 @@ for more detail.
 
 The MIT License (MIT)
 
-Copyright (c) 2020-2022 Yusuke Kawasaki
+Copyright (c) 2020-2026 Yusuke Kawasaki
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
