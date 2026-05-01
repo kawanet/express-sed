@@ -1,5 +1,6 @@
-// 共通の express バージョン非依存のテストロジック。
-// express 本体を引数で受け取り、両系列で同一ケースを実行する。
+// Express-version-agnostic test logic shared by v4 and v5.
+// Receives the `express` module as an argument and runs the same set of
+// cases on both lines.
 
 import {strict as assert} from "node:assert";
 import {describe, it} from "node:test";
@@ -13,8 +14,8 @@ import supertest from "supertest";
 import {sed} from "../../lib/express-sed.ts";
 import type {SedOptions} from "../../types/express-sed.d.ts";
 
-// テスト fixture でしか使わない最小限の Content-Type マッピング。
-// 本物の mime-types を引き入れずに済ませる。
+// Minimal Content-Type mapping used only by these test fixtures —
+// avoids pulling in the real `mime-types` package.
 const mimeMap: Record<string, string> = {
     ".css": "text/css; charset=utf-8",
     ".html": "text/html; charset=utf-8",
@@ -26,8 +27,8 @@ const mimeMap: Record<string, string> = {
     ".png": "image/png",
 };
 
-// express の default export だけ型として受け取れれば良い。
-// 4/5 で型が異なるが、ここでは構造的互換のため any 経由で扱う。
+// We only need to accept the Express default export by structure.
+// The v4 and v5 types differ, so route through `any` for structural compat.
 type ExpressModule = any;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -51,8 +52,9 @@ function concatParser(res: NodeJS.ReadableStream, fn: (err: Error | null, data?:
 }
 
 /**
- * 1 byte ずつ chunked で配信するミドルウェア。
- * Content-Length は付けるが Transfer-Encoding: chunked になる。
+ * Middleware that streams the file out one byte per chunk.
+ * Sets Content-Length but the response still goes out as
+ * Transfer-Encoding: chunked.
  */
 function chunkedStatic(_express: ExpressModule, htdocs: string) {
     return (req: any, res: any, _next: any) => {
@@ -93,12 +95,12 @@ const binaryFiles = [
 ];
 
 /**
- * express 4/5 共通のテストケース集。
- * `label` を describe ラベルとして使用する。
+ * Test cases shared between Express 4 and 5.
+ * `label` is used as the top-level describe label.
  */
 export function sharedTests(express: ExpressModule, label: string): void {
     describe(label, () => {
-        // ----- 10.sed: 静的ファイルに対する一括 sed -----
+        // ----- 10.sed: bulk sed against static files -----
         describe("10.sed: text content without sed", () => {
             for (const p of textFiles) {
                 it(p, async () => {
@@ -134,7 +136,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             }
         });
 
-        // ----- 20.chunked: 1 byte 刻みの chunked レスポンス -----
+        // ----- 20.chunked: chunked responses written one byte at a time -----
         describe("20.chunked: text content without sed", () => {
             for (const p of textFiles) {
                 it(p, async () => {
@@ -170,7 +172,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             }
         });
 
-        // ----- 30.regexp: sed-style 文字列定義の各種パターン -----
+        // ----- 30.regexp: variations of sed-style string definitions -----
         describe("30.regexp: regular expressions", () => {
             const cases: { def: string; query: string; expected: string }[] = [
                 {def: "(without sed)", query: "[foo][foo]", expected: "[foo][foo]"},
@@ -192,7 +194,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             }
         });
 
-        // ----- 40.method: HTTP method フィルタ -----
+        // ----- 40.method: HTTP method filter -----
         describe("40.method: method filter", () => {
             const buildAgent = () => {
                 const app = express();
@@ -236,7 +238,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             });
         });
 
-        // ----- 50.content-type: Content-Type フィルタ -----
+        // ----- 50.content-type: Content-Type filter -----
         describe("50.content-type: content-type filter", () => {
             const buildAgent = (options: SedOptions) => {
                 const app = express();
@@ -258,7 +260,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             });
         });
 
-        // ----- 60.gzip: 圧縮レスポンスを透過的に sed する -----
+        // ----- 60.gzip: transparently sed compressed responses -----
         describe("60.gzip: gzip / deflate", () => {
             const buildAgent = () => {
                 const app = express();
@@ -282,7 +284,7 @@ export function sharedTests(express: ExpressModule, label: string): void {
             }
         });
 
-        // ----- 90.synopsis: README の SYNOPSIS と同等の使い方 -----
+        // ----- 90.synopsis: same usage shown in the README SYNOPSIS -----
         describe("90.synopsis", () => {
             it("replace with string", async () => {
                 const app = express();
@@ -343,7 +345,7 @@ function sampleEncoded(_express: ExpressModule) {
         res.header("Content-Encoding", encoding);
         res.header("Content-Length", String(buffer.length));
 
-        // 1 byte 刻みで chunked に書き出して、stream 経路を経由させる。
+        // Write one byte per chunk to force the stream path.
         for (const byte of buffer) {
             res.write(Buffer.from([byte]));
         }

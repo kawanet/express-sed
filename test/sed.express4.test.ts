@@ -1,4 +1,4 @@
-// Express 4 系列でのテストエントリ。
+// Test entry for the Express 4 line.
 import express from "express4";
 import {sharedTests} from "./lib/shared.ts";
 

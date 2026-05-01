@@ -8,10 +8,10 @@ import type * as types from "../types/express-sed.d.ts";
 type SedOptions = types.SedOptions;
 
 const defaults: SedOptions = {
-    // skip when HEAD method per default
+    // Skip the HEAD method by default.
     method: /^(?!HEAD)/,
 
-    // detect text-ish types per default
+    // Detect text-ish Content-Type values by default.
     contentType: /^text|json|javascript|svg|xml|utf-8/i,
 };
 
