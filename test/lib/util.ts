@@ -49,12 +49,11 @@ export function concatParser(res: NodeJS.ReadableStream, fn: (err: Error | null,
     const data: Buffer[] = [];
     res.on("data", chunk => data.push(chunk as Buffer));
     res.on("end", () => fn(null, Buffer.concat(data)));
+    res.on("error", err => fn(err));
 }
 
 /**
- * Middleware that streams the file out one byte per chunk.
- * Sets Content-Length but the response still goes out as
- * Transfer-Encoding: chunked.
+ * middleware to respond a static file chunked by each byte
  */
 export function chunkedStatic(_express: ExpressModule, htdocs: string) {
     return (req: any, res: any, _next: any) => {

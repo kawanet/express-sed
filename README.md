@@ -9,7 +9,7 @@ Works with Express 4 and 5.
 
 ## SYNOPSIS
 
-```ts
+```js
 import express from "express";
 import {sed} from "express-sed";
 
