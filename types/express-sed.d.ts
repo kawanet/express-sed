@@ -1,8 +1,8 @@
 import type {RequestHandler} from "express";
 
-declare type Replacer = (str: string) => string | Promise<string>;
+export declare type Replacer = (str: string) => string | Promise<string>;
 
-declare interface SedOptions {
+export declare interface SedOptions {
     /// HTTP request method: regexp or forward match string
     method?: RegExp | { test: (str: string) => boolean };
 

@@ -1,16 +1,17 @@
 // express-sed.ts
+// Express middleware to transform response body via a sed-style replacer.
 
 import {requestHandler, responseHandler} from "express-intercept";
 import {sed as parse} from "sed-lite";
-import type * as types from "../types/express-sed";
+import type * as types from "../types/express-sed.d.ts";
 
 type SedOptions = types.SedOptions;
 
 const defaults: SedOptions = {
-    // skip when HEAD method per default
+    // Skip the HEAD method by default.
     method: /^(?!HEAD)/,
 
-    // detect text-ish types per default
+    // Detect text-ish Content-Type values by default.
     contentType: /^text|json|javascript|svg|xml|utf-8/i,
 };
 
@@ -38,4 +39,4 @@ export const sed: typeof types.sed = (replacer, options) => {
     return requestHandler()
         .for(req => method.test(req.method))
         .use(removeRange, replaceHandler);
-}
+};
