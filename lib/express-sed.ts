@@ -42,21 +42,17 @@ export const sed: typeof types.sed = (replacer, options) => {
         .if(res => contentType.test(res.getHeader("Content-Type") as string))
         .replaceString(replacer);
 
-    // For HEAD requests there is no useful body to transform: the upstream
-    // typically writes none (Express's `res.send` and `send`/`serve-static`
-    // both check `req.method === "HEAD"` and short-circuit) and the HTTP
-    // server discards anything we hand back. What sed actually needs to
-    // do for HEAD is delete the upstream's stale `ETag` / `Content-Length`
-    // so they stop disagreeing with the same resource served via GET.
+    // For HEAD requests, the only job sed has is to delete the upstream's
+    // stale `ETag` / `Content-Length` so they stop disagreeing with the
+    // same resource served via GET. The body itself stays empty: the
+    // upstream typically writes none (Express's `res.send` and `send` /
+    // `serve-static` both short-circuit on `req.method === "HEAD"`) and
+    // the HTTP server would discard anything we hand back anyway.
     //
-    // We strip the headers directly via `getResponse` rather than going
-    // through `replaceBuffer(_ => Buffer.of())`. The `replaceBuffer` path
-    // would land in `express-intercept`'s `setBuffer(empty)` which, when
-    // an `etag fn` is configured (Express's default), sets `ETag` to the
-    // weak hash of the empty body — that's a fresh but still incorrect
-    // value (it advertises the empty body as the resource). Direct
-    // `removeHeader` calls leave both headers absent, regardless of the
-    // app's `etag fn` setting.
+    // The headers are removed directly with `res.removeHeader` so the
+    // outcome does not depend on the app's `etag fn` setting (any path
+    // through `setBuffer` would re-issue an `etag fn`-derived ETag for
+    // the empty body, which is fresh but still incorrect).
     const headHandler = responseHandler()
         .for(req => req.method === "HEAD")
         .getResponse(res => {

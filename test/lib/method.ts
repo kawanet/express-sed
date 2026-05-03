@@ -60,10 +60,11 @@ export function runMethodTests(express: ExpressModule): void {
 
     describe("40.method: default filter strips HEAD's stale headers", () => {
         // No method option: every method (including HEAD) flows through
-        // sed. HEAD specifically is forced through the empty-body branch
-        // so express-intercept's `setBuffer(empty)` clears the upstream's
-        // pre-replace ETag and Content-Length, leaving the same header
-        // shape the non-HEAD path produces after replacement.
+        // sed. HEAD specifically is routed through the response handler
+        // that calls `res.removeHeader("ETag")` / `removeHeader("Content-
+        // Length")` directly, so the upstream's pre-replace values never
+        // reach the client and the outcome does not depend on the app's
+        // `etag fn` setting.
         const buildAgent = () => {
             const app = express();
             app.use(sed("s/sample/[SAMPLE]/g"));
