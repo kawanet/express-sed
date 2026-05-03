@@ -33,25 +33,6 @@ See TypeScript declaration
 [express-sed.d.ts](https://github.com/kawanet/express-sed/blob/master/types/express-sed.d.ts)
 for more detail.
 
-## NOTE ON ETAG / LAST-MODIFIED
-
-Since this middleware mutates the response body, any upstream `ETag` /
-`Last-Modified` headers may become inaccurate. If your stack relies on
-conditional GETs, consider stripping or regenerating these headers
-downstream of `sed`. Example:
-
-```ts
-import {responseHandler} from "express-intercept";
-import {sed} from "express-sed";
-
-const stripValidators = responseHandler().getResponse(res => {
-    res.removeHeader("etag");
-    res.removeHeader("last-modified");
-});
-
-app.use(stripValidators, sed("s/foo/FOO/g"));
-```
-
 ## SEE ALSO
 
 - https://github.com/kawanet/sed-lite
