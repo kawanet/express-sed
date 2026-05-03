@@ -24,15 +24,12 @@ export function runMethodTests(express: ExpressModule): void {
             assert.equal(res.headers["content-length"], String("[SAMPLE] text\n".length));
         });
 
-        it("HEAD /sample.txt — body empty, Content-Length stripped", async () => {
+        it("HEAD /sample.txt — body empty, Content-Length and ETag stripped", async () => {
             const agent = buildAgent();
             const res = await agent.head("/sample.txt");
             assert.equal(res.text, undefined);
             assert.equal(res.headers["content-length"], undefined);
-            // ETag intentionally not asserted: when Express's `etag fn` is
-            // wired (the default), express-intercept's setBuffer recomputes
-            // ETag against the (now empty) body rather than removing it,
-            // and the precise value is etag-fn dependent.
+            assert.equal(res.headers["etag"], undefined);
         });
 
         it("GET /api/", async () => {
@@ -74,11 +71,12 @@ export function runMethodTests(express: ExpressModule): void {
             return supertest(app);
         };
 
-        it("HEAD /sample.txt — body empty, Content-Length stripped", async () => {
+        it("HEAD /sample.txt — body empty, Content-Length and ETag both removed", async () => {
             const agent = buildAgent();
             const res = await agent.head("/sample.txt");
             assert.equal(res.text, undefined);
             assert.equal(res.headers["content-length"], undefined);
+            assert.equal(res.headers["etag"], undefined);
         });
 
         it("GET /sample.txt — body transformed, Content-Length matches the post-replace length", async () => {
