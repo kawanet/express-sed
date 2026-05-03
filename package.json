@@ -38,11 +38,9 @@
   },
   "exports": {
     ".": {
+      "types": "./types/express-sed.d.ts",
       "require": "./dist/express-sed.cjs",
-      "import": {
-        "types": "./types/express-sed.d.ts",
-        "default": "./dist/express-sed.mjs"
-      }
+      "import": "./dist/express-sed.mjs"
     }
   },
   "files": [

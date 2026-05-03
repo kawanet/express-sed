@@ -3,7 +3,11 @@
 
 import {requestHandler, responseHandler} from "express-intercept";
 import {sed as parse} from "sed-lite";
-import type * as types from "../types/express-sed.d.ts";
+// Self-reference via the package name so that `tsc --noEmit` resolves
+// these types through `package.json` `exports` — the same path an
+// external consumer would take. If the `exports.types` mapping ever
+// breaks, the build fails here.
+import type * as types from "express-sed";
 
 type SedOptions = types.SedOptions;
 

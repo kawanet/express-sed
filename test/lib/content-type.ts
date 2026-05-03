@@ -5,7 +5,9 @@ import {describe, it} from "node:test";
 import supertest from "supertest";
 
 import {sed} from "../../lib/express-sed.ts";
-import type {SedOptions} from "../../types/express-sed.d.ts";
+// Self-reference: resolve via `package.json` `exports.types` so a broken
+// public type-export setup would surface here in `tsc --noEmit`.
+import type {SedOptions} from "express-sed";
 import {type ExpressModule, documentRoot} from "./util.ts";
 
 export function runContentTypeTests(express: ExpressModule): void {
