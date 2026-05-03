@@ -12,9 +12,9 @@ import type * as types from "express-sed";
 type SedOptions = types.SedOptions;
 
 const defaults: SedOptions = {
-    // Match every method by default. HEAD is routed through the empty-body
-    // branch in `sed()` so the upstream's pre-replace ETag / Content-Length
-    // get stripped instead of leaking through unchanged.
+    // Match every method by default. HEAD requests are routed through
+    // `stripHeadBody` in `sed()` so the upstream's pre-replace ETag /
+    // Content-Length get cleared instead of leaking through unchanged.
     method: null,
 
     // Detect text-ish Content-Type values by default.
@@ -50,17 +50,15 @@ export const sed: typeof types.sed = (replacer, options) => {
     // they stop disagreeing with the same resource served via GET.
     //
     // `replaceBuffer(_ => Buffer.of())` always reaches express-intercept's
-    // `setBuffer(empty)` codepath, which removes both headers in one shot
-    // (Content-Length goes away when the buffer is empty, and ETag is
-    // removed unless an `etag fn` is configured at the app level, in
-    // which case it gets recomputed against the empty body).
-    const stripHeadBody = responseHandler().replaceBuffer(_ => Buffer.of());
-    const headChain = requestHandler().use(stripHeadBody, replaceHandler);
-
-    const methodRouter = (req: any, res: any, next: any) =>
-        (req.method === "HEAD") ? headChain(req, res, next) : replaceHandler(req, res, next);
+    // `setBuffer(empty)` codepath: Content-Length goes away (length === 0),
+    // and ETag is removed when no `etag fn` is configured, otherwise it
+    // is recomputed against the empty body — either way the upstream's
+    // pre-replace value is gone.
+    const stripHeadBody = responseHandler()
+        .for(req => req.method === "HEAD")
+        .replaceBuffer(_ => Buffer.of());
 
     return requestHandler()
         .for(req => !method || method.test(req.method))
-        .use(removeRange, methodRouter);
+        .use(removeRange, stripHeadBody, replaceHandler);
 };
