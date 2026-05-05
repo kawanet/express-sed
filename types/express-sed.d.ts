@@ -1,5 +1,7 @@
 import type {RequestHandler} from "express";
 
+export {} // external module indicator
+
 export declare type Replacer = (str: string) => string | Promise<string>;
 
 export declare interface SedOptions {
