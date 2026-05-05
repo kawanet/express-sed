@@ -5,15 +5,12 @@ import {fileURLToPath} from "node:url";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-// Express factory shape that includes both the call signature and the
-// namespace methods (`.static`, `.Router`, `.json`, ...) the runners
-// reach for. Express ships as a CommonJS `export = e` namespace, so
-// `typeof import("express4")` resolves to the value of `import express
-// from "express4"` directly (no `.default`). We use the `express4`
-// alias here because that is what this repo installs (top-level
-// `@types/express` is absent — only the `express4` / `express5` npm
-// aliases are wired up).
-export type ExpressModule = typeof import("express4");
+// The full Express module/namespace value: call signature + namespace
+// methods (`.static`, `.Router`, `.json`, ...) the runners reach for.
+// Express ships as a CommonJS `export = e` namespace, so
+// `typeof import("express")` resolves to the value of `import express
+// from "express"` directly (no `.default`).
+export type ExpressModule = typeof import("express");
 
 // Minimal Content-Type mapping used only by these test fixtures —
 // avoids pulling in the real `mime-types` package.
