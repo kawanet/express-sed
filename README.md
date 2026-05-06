@@ -1,9 +1,9 @@
 # express-sed
 
-Express middleware to transform response body
-
 [![Node.js CI](https://github.com/kawanet/express-sed/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/kawanet/express-sed/actions/)
 [![npm version](https://img.shields.io/npm/v/express-sed)](https://www.npmjs.com/package/express-sed)
+
+Express middleware to transform response body
 
 Works with Express 4 and 5.
 
