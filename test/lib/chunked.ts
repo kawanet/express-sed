@@ -3,7 +3,6 @@
 import * as fs from "node:fs"
 import {describe, it} from "node:test"
 import supertest from "supertest"
-
 import {sed} from "../../lib/express-sed.ts"
 import {
     type ExpressModule,

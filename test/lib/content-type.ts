@@ -3,7 +3,6 @@
 import {strict as assert} from "node:assert"
 import {describe, it} from "node:test"
 import supertest from "supertest"
-
 import {sed} from "../../lib/express-sed.ts"
 // Self-reference: resolve via `package.json` `exports.types` so a broken
 // public type-export setup would surface here in `tsc --noEmit`.

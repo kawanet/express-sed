@@ -3,7 +3,6 @@
 import {strict as assert} from "node:assert"
 import {describe, it} from "node:test"
 import supertest from "supertest"
-
 import {sed} from "../../lib/express-sed.ts"
 import {type ExpressModule, documentRoot} from "./util.ts"
 

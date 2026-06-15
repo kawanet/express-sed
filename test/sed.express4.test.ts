@@ -5,7 +5,6 @@
 
 import express from "express4"
 import {describe} from "node:test"
-
 import {runChunkedTests} from "./lib/chunked.ts"
 import {runContentTypeTests} from "./lib/content-type.ts"
 import {runGzipTests} from "./lib/gzip.ts"

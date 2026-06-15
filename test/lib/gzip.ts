@@ -4,7 +4,6 @@ import {describe, it} from "node:test"
 import {promisify} from "node:util"
 import {deflate, gzip} from "node:zlib"
 import supertest from "supertest"
-
 import {sed} from "../../lib/express-sed.ts"
 import {type ExpressModule} from "./util.ts"
 
