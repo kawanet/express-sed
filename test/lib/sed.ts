@@ -1,7 +1,7 @@
 // 10.sed: bulk sed against static files (text passthrough, text transform, binary ignored).
 
-import {describe, it} from "node:test"
 import * as fs from "node:fs"
+import {describe, it} from "node:test"
 import supertest from "supertest"
 
 import {sed} from "../../lib/express-sed.ts"

@@ -1,8 +1,8 @@
 // 60.gzip: transparently sed compressed responses.
 
 import {describe, it} from "node:test"
-import {gzip, deflate} from "node:zlib"
 import {promisify} from "node:util"
+import {deflate, gzip} from "node:zlib"
 import supertest from "supertest"
 
 import {sed} from "../../lib/express-sed.ts"
