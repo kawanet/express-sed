@@ -1,6 +1,6 @@
 # express-sed
 
-[![Node.js CI](https://github.com/kawanet/express-sed/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/kawanet/express-sed/actions/)
+[![Node.js CI](https://github.com/kawanet/express-sed/actions/workflows/nodejs.yml/badge.svg?branch=main)](https://github.com/kawanet/express-sed/actions/)
 [![npm version](https://img.shields.io/npm/v/express-sed)](https://www.npmjs.com/package/express-sed)
 
 Express middleware to transform response body
@@ -30,7 +30,7 @@ app.listen(3000);
 ```
 
 See TypeScript declaration
-[express-sed.d.ts](https://github.com/kawanet/express-sed/blob/master/types/express-sed.d.ts)
+[express-sed.d.ts](https://github.com/kawanet/express-sed/blob/main/types/express-sed.d.ts)
 for more detail.
 
 ## SEE ALSO
