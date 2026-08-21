@@ -11,7 +11,7 @@ import type * as types from "express-sed"
 
 type SedOptions = types.SedOptions
 
-const defaults: SedOptions = {
+const defaults = {
     // Match every method by default. HEAD requests are routed through
     // `headHandler` in `sed()` so the upstream's pre-replace ETag /
     // Content-Length get removed instead of leaking through unchanged.
@@ -19,7 +19,7 @@ const defaults: SedOptions = {
 
     // Detect text-ish Content-Type values by default.
     contentType: /^text|json|javascript|svg|xml|utf-8/i,
-}
+} satisfies SedOptions
 
 const removeRange = requestHandler().getRequest(req => delete req.headers.range)
 
