@@ -10,8 +10,9 @@ import {sed as parse} from "sed-lite"
 import type * as types from "express-sed"
 
 type SedOptions = types.SedOptions
+type Replacer = types.Replacer
 
-const defaults: SedOptions = {
+const defaults = {
     // Match every method by default. HEAD requests are routed through
     // `headHandler` in `sed()` so the upstream's pre-replace ETag /
     // Content-Length get removed instead of leaking through unchanged.
@@ -19,18 +20,18 @@ const defaults: SedOptions = {
 
     // Detect text-ish Content-Type values by default.
     contentType: /^text|json|javascript|svg|xml|utf-8/i,
-}
+} satisfies SedOptions
 
 const removeRange = requestHandler().getRequest(req => delete req.headers.range)
 
 export const sed: typeof types.sed = (replacer, options) => {
     if (!options) options = {} as SedOptions
 
-    if ("function" !== typeof replacer) {
-        replacer = parse(replacer)
-    }
+    // Keep the argument intact so the error below can name what was rejected.
+    const replace: Replacer | undefined =
+        ("function" === typeof replacer) ? replacer : parse(replacer)
 
-    if (!replacer) {
+    if (!replace) {
         throw new SyntaxError("Invalid transform: " + replacer)
     }
 
@@ -40,7 +41,7 @@ export const sed: typeof types.sed = (replacer, options) => {
 
     const replaceHandler = responseHandler()
         .if(res => contentType.test(res.getHeader("Content-Type") as string))
-        .replaceString(replacer)
+        .replaceString(replace)
 
     // For HEAD requests, the only job sed has is to delete the upstream's
     // stale `ETag` / `Content-Length` so they stop disagreeing with the

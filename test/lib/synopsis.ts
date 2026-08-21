@@ -17,7 +17,7 @@ export function runSynopsisTests(express: ExpressModule): void {
         it("replace by function", async () => {
             const app = express()
             const vars: Record<string, string> = {year: "2026"}
-            app.use(sed((body: string) => body.replace(/\[(\w+)\]/g, (_match, k) => vars[k])))
+            app.use(sed((body: string) => body.replace(/\[(\w+)\]/g, (_match, k) => vars[k]!)))
             app.use(express.static(documentRoot))
             await supertest(app).get("/sample.html").expect(/Copyright \(c\) 2026/)
         })
