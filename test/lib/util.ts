@@ -3,7 +3,6 @@
 
 import * as fs from "node:fs"
 import * as path from "node:path"
-import {fileURLToPath} from "node:url"
 
 // The full Express module/namespace value: call signature + namespace
 // methods (`.static`, `.Router`, `.json`, ...) the runners reach for.
@@ -25,8 +24,7 @@ const mimeMap: Record<string, string> = {
     ".png": "image/png",
 }
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-export const documentRoot = path.resolve(__dirname, "..", "htdocs")
+export const documentRoot = path.resolve(process.cwd(), "test", "htdocs")
 
 export const textFiles = [
     "/sample.css",
